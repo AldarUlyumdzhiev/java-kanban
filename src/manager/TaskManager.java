@@ -1,3 +1,10 @@
+package manager;
+
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,7 +18,7 @@ public class TaskManager {
         return ++idCounter;
     }
 
-    // Методы для задач (Task)
+    // Методы для задач (model.Task)
     public ArrayList<Task> getAllTasks() {
         System.out.println(new ArrayList<>(tasks.values()));
         return new ArrayList<>(tasks.values());
@@ -39,7 +46,7 @@ public class TaskManager {
         tasks.remove(id);
     }
 
-    // Методы для эпиков (Epic)
+    // Методы для эпиков (model.Epic)
     public void createEpic(Epic epic) {
         int id = generateId();
         epic.setId(id);
@@ -73,7 +80,7 @@ public class TaskManager {
         }
     }
 
-    // Методы для подзадач (Subtask)
+    // Методы для подзадач (model.Subtask)
     public void createSubtask(Subtask subtask) {
         int id = generateId();
         subtask.setId(id);

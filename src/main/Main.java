@@ -1,3 +1,11 @@
+package main;
+
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
+import manager.TaskManager;
+
 public class Main {
 
     public static void main(String[] args) {
