@@ -1,13 +1,14 @@
 package model;
 
-public class Subtask extends Task{
+public class Subtask extends Task {
     private int epicId;
 
-    public Subtask(String name, String description, int id, TaskStatus status, int epicId) {
-        super(name, description, id, status);
+    public Subtask(String name, String description, TaskStatus status, int epicId) {
+        super(name, description, status);
         this.epicId = epicId;
     }
 
+    // Геттеры и сеттеры для epicId
     public int getEpicId() {
         return epicId;
     }
@@ -18,11 +19,11 @@ public class Subtask extends Task{
 
     @Override
     public String toString() {
-        return "model.Subtask{" +
-                "id=" + getId() +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", status=" + getStatus() +
+        return "Subtask{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
                 ", epicId=" + epicId +
                 '}';
     }

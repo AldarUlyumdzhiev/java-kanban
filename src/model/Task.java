@@ -3,34 +3,18 @@ package model;
 import java.util.Objects;
 
 public class Task {
-    private String name;
-    private String description;
-    private int id;
-    private TaskStatus status;
+    protected int id;
+    protected String name;
+    protected String description;
+    protected TaskStatus status;
 
-    public Task(String name, String description, int id, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
-        this.id = id;
         this.status = status;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    // Геттеры и сеттеры для id
     public int getId() {
         return id;
     }
@@ -39,6 +23,25 @@ public class Task {
         this.id = id;
     }
 
+    // Геттеры и сеттеры для name
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // Геттеры и сеттеры для description
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    // Геттеры и сеттеры для status
     public TaskStatus getStatus() {
         return status;
     }
@@ -66,9 +69,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return "model.Task{" +
+        return "Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", status=" + status +
                 '}';
     }
