@@ -49,9 +49,9 @@ public class InMemoryTaskManagerTest {
         assertNotEquals(100, newTask.getId(), "Генерируемый ID не должен конфликтовать с существующими ID.");
     }
 
-    // Проверка неизменности задачи при добавлении в менеджер
+    // Проверка апдейта задачи
     @Test
-    public void testTaskModificationAfterAdding() {
+    public void testTaskModify() {
         Task task = new Task("Task 1", "Task Description", TaskStatus.NEW);
         taskManager.createTask(task);
 
@@ -64,7 +64,7 @@ public class InMemoryTaskManagerTest {
 
     // Проверка работы истории просмотров
     @Test
-    public void testHistoryManagerFunctionality() {
+    public void testHistoryManager() {
         Task task1 = new Task("Task 1", "Task Description 1", TaskStatus.NEW);
         Task task2 = new Task("Task 2", "Task Description 2", TaskStatus.NEW);
         taskManager.createTask(task1);

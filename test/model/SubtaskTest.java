@@ -9,7 +9,7 @@ public class SubtaskTest {
 
     // Проверка равенства подзадач с одинаковыми ID и полями
     @Test
-    public void testSubtasksEqualityWithSameIdAndFields() {
+    public void testEqualSameId() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         // Создаем Epic
@@ -38,7 +38,7 @@ public class SubtaskTest {
 
     // Проверка неравенства подзадач с разными ID
     @Test
-    public void testSubtasksInequalityWithDifferentId() {
+    public void testInequalDiffId() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         // Создаем Epic
@@ -58,7 +58,7 @@ public class SubtaskTest {
 
     // Проверка, что Subtask не может быть своим собственным эпиком
     @Test
-    public void testSubtaskCannotBeCreatedForNonexistentEpic() {
+    public void testSubtaskForNullEpic() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         // Пытаемся создать Subtask с несуществующим epicId

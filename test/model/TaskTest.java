@@ -9,7 +9,7 @@ public class TaskTest {
 
     // Проверка равенства задач при одинаковых полях и ID
     @Test
-    public void testTasksEqualityWithSameIdAndFields() {
+    public void testEqualSameId() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
@@ -33,7 +33,7 @@ public class TaskTest {
 
     // Проверка неравенства задач с разными ID
     @Test
-    public void testTasksInequalityWithDifferentId() {
+    public void testInequalDiffId() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);

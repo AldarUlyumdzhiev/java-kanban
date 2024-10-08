@@ -9,7 +9,7 @@ public class EpicTest {
 
     // Проверка равенства эпиков с одинаковыми ID и полями
     @Test
-    public void testEpicsEqualityWithSameIdAndFields() {
+    public void testEqualSameId() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         Epic epic1 = new Epic("Epic 1", "Description 1");
@@ -33,7 +33,7 @@ public class EpicTest {
 
     // Проверка неравенства эпиков с разными ID
     @Test
-    public void testEpicsInequalityWithDifferentId() {
+    public void testInequalDiffId() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         Epic epic1 = new Epic("Epic 1", "Description 1");
@@ -48,7 +48,7 @@ public class EpicTest {
 
     // Проверка, что Epic не может добавить сам себя как подзадачу
     @Test
-    public void testEpicCannotAddItselfAsSubtask() {
+    public void testCantAddItselfAsSubtask() {
         Epic epic = new Epic("Epic 1", "Description 1");
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
         taskManager.createEpic(epic);
