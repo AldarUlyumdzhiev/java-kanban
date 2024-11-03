@@ -26,7 +26,7 @@ public interface TaskManager {
     List<Subtask> getAllSubtasks();
     void deleteAllSubtasks();
     Subtask getSubtaskById(int id);
-    boolean createSubtask(Subtask subtask);
+    boolean createSubtask(Subtask subtask, Epic epic);
     boolean updateSubtask(Subtask subtask);
     void deleteSubtaskById(int id);
 
