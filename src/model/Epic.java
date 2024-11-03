@@ -29,7 +29,7 @@ public class Epic extends Task {
             System.out.println("Подзадачи с ID " + id + " нет в этом Epic.");
             return;
         }
-        subtaskIds.remove(id);
+        subtaskIds.remove(Integer.valueOf(id));
     }
 
     @Override
