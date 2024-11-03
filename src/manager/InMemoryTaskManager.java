@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
+
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
@@ -160,7 +161,6 @@ public class InMemoryTaskManager implements TaskManager {
         return true;
     }
 
-
     @Override
     public List<Subtask> getAllSubtasks() {
         return new ArrayList<>(subtasks.values());
@@ -188,6 +188,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return true;
     }
+
     public boolean updateSubtaskEpic(Subtask subtask, Epic newEpic) {
         if (subtask == null || newEpic == null) {
             return false;
