@@ -47,7 +47,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean createTask(Task task) {
         if (tasks.containsKey(task.getId())) {
-            // Задача с таким ID уже существует
             return false;
         }
         int id = generateId();
@@ -75,7 +74,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean createEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
-            // Epic с таким ID уже существует
             return false;
         }
         int id = generateId();
@@ -128,7 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             for (int subtaskId : epic.getSubtaskIds()) {
                 subtasks.remove(subtaskId);
-                historyManager.remove(subtaskId); // Remove subtasks from history
+                historyManager.remove(subtaskId);
             }
         }
     }
@@ -141,19 +139,15 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (!epics.containsKey(epic.getId())) {
-            // Указанный эпик не управляется этим TaskManager
             return false;
         }
 
         int id = subtask.getId();
         if (id == 0) {
-            // Если ID не установлен, генерируем новый
             id = generateId();
             subtask.setId(id);
         } else {
-            // Если ID уже установлен, проверяем на конфликт
             if (subtasks.containsKey(id)) {
-                // Подзадача с таким ID уже существует
                 return false;
             }
         }
@@ -200,7 +194,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (!epics.containsKey(newEpic.getId())) {
-            return false; // Новый эпик не управляется этим TaskManager
+            return false;
         }
 
         Epic oldEpic = epics.get(subtask.getEpicId());

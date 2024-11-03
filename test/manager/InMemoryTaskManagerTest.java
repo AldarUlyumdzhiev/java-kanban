@@ -12,6 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTaskManagerTest {
+
     private TaskManager taskManager;
 
     @BeforeEach
@@ -19,7 +20,7 @@ public class InMemoryTaskManagerTest {
         taskManager = Managers.getDefault();
     }
 
-    // Test adding and retrieving tasks by ID
+    // Тест добавления и получения задач по ID.
     @Test
     public void testAddAndGetTasksById() {
         Task task = new Task("Task 1", "Task Description", TaskStatus.NEW);
@@ -31,12 +32,12 @@ public class InMemoryTaskManagerTest {
         Subtask subtask = new Subtask("Subtask 1", "Subtask Description", TaskStatus.NEW);
         taskManager.createSubtask(subtask, epic);
 
-        assertEquals(task, taskManager.getTaskById(task.getId()), "Task should be retrievable by its ID.");
-        assertEquals(epic, taskManager.getEpicById(epic.getId()), "Epic should be retrievable by its ID.");
-        assertEquals(subtask, taskManager.getSubtaskById(subtask.getId()), "Subtask should be retrievable by its ID.");
+        assertEquals(task, taskManager.getTaskById(task.getId()), "Задача должна быть доступна по своему ID.");
+        assertEquals(epic, taskManager.getEpicById(epic.getId()), "Эпик должен быть доступен по своему ID.");
+        assertEquals(subtask, taskManager.getSubtaskById(subtask.getId()), "Подзадача должна быть доступна по своему ID.");
     }
 
-    // Test that generated IDs do not conflict
+    // Тест того, что сгенерированные ID не конфликтуют.
     @Test
     public void testNoIdConflict() {
         Task task = new Task("Task 1", "Task Description", TaskStatus.NEW);
@@ -46,10 +47,10 @@ public class InMemoryTaskManagerTest {
         Task newTask = new Task("New Task", "New Task Description", TaskStatus.NEW);
         taskManager.createTask(newTask);
 
-        assertNotEquals(100, newTask.getId(), "Generated ID should not conflict with existing IDs.");
+        assertNotEquals(100, newTask.getId(), "Сгенерированный ID не должен конфликтовать с существующими ID.");
     }
 
-    // Test task update
+    // Тест обновления задачи.
     @Test
     public void testTaskModify() {
         Task task = new Task("Task 1", "Task Description", TaskStatus.NEW);
@@ -60,10 +61,10 @@ public class InMemoryTaskManagerTest {
         taskManager.updateTask(savedTask);
 
         Task updatedTask = taskManager.getTaskById(task.getId());
-        assertEquals("Updated Task Name", updatedTask.getName(), "Task name should be updated.");
+        assertEquals("Updated Task Name", updatedTask.getName(), "Имя задачи должно быть обновлено.");
     }
 
-    // Test history manager
+    // Тест менеджера истории.
     @Test
     public void testHistoryManager() {
         Task task1 = new Task("Task 1", "Task Description 1", TaskStatus.NEW);
@@ -71,18 +72,18 @@ public class InMemoryTaskManagerTest {
         taskManager.createTask(task1);
         taskManager.createTask(task2);
 
-        // View tasks
+        // Просмотр задач.
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task2.getId());
 
-        // Check history
+        // Проверка истории.
         List<Task> history = taskManager.getHistory();
-        assertEquals(2, history.size(), "History should contain two tasks.");
-        assertEquals(task1, history.get(0), "First task in history should be task1.");
-        assertEquals(task2, history.get(1), "Second task in history should be task2.");
+        assertEquals(2, history.size(), "История должна содержать две задачи.");
+        assertEquals(task1, history.get(0), "Первая задача в истории должна быть task1.");
+        assertEquals(task2, history.get(1), "Вторая задача в истории должна быть task2.");
     }
 
-    // Test history manager with task deletion
+    // Тест менеджера истории с удалением задачи.
     @Test
     public void testHistoryManagerWithTaskDeletion() {
         Task task1 = new Task("Task 1", "Task Description 1", TaskStatus.NEW);
@@ -90,20 +91,20 @@ public class InMemoryTaskManagerTest {
         taskManager.createTask(task1);
         taskManager.createTask(task2);
 
-        // View tasks
+        // Просмотр задач.
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task2.getId());
 
-        // Delete first task
+        // Удаление первой задачи.
         taskManager.deleteTaskById(task1.getId());
 
-        // Check history
+        // Проверка истории.
         List<Task> history = taskManager.getHistory();
-        assertEquals(1, history.size(), "History should contain one task after deletion.");
-        assertEquals(task2, history.get(0), "Remaining task should be task2.");
+        assertEquals(1, history.size(), "После удаления история должна содержать одну задачу.");
+        assertEquals(task2, history.getFirst(), "Оставшаяся задача должна быть task2.");
     }
 
-    // Test subtask deletion from epic
+    // Тест удаления подзадачи из эпика.
     @Test
     public void testSubtaskDeletionFromEpic() {
         Epic epic = new Epic("Epic 1", "Epic Description");
@@ -112,17 +113,17 @@ public class InMemoryTaskManagerTest {
         Subtask subtask1 = new Subtask("Subtask 1", "Subtask Description 1", TaskStatus.NEW);
         taskManager.createSubtask(subtask1, epic);
 
-        // Ensure subtask is added to epic
-        assertTrue(epic.getSubtaskIds().contains(subtask1.getId()), "Epic should contain the Subtask ID.");
+        // Убедимся, что подзадача добавлена в эпик.
+        assertTrue(epic.getSubtaskIds().contains(subtask1.getId()), "Эпик должен содержать ID подзадачи.");
 
-        // Delete subtask
+        // Удаление подзадачи.
         taskManager.deleteSubtaskById(subtask1.getId());
 
-        // Ensure subtask is removed from epic
-        assertFalse(epic.getSubtaskIds().contains(subtask1.getId()), "Epic should not contain the deleted Subtask ID.");
+        // Убедимся, что подзадача удалена из эпика.
+        assertFalse(epic.getSubtaskIds().contains(subtask1.getId()), "Эпик не должен содержать удалённый ID подзадачи.");
     }
 
-    // Test that deleting an epic removes its subtasks
+    // Тест того, что удаление эпика удаляет его подзадачи.
     @Test
     public void testEpicDeletionRemovesSubtasks() {
         Epic epic = new Epic("Epic 1", "Epic Description");
@@ -133,15 +134,15 @@ public class InMemoryTaskManagerTest {
         taskManager.createSubtask(subtask1, epic);
         taskManager.createSubtask(subtask2, epic);
 
-        // Delete epic
+        // Удаление эпика.
         taskManager.deleteEpicById(epic.getId());
 
-        // Ensure subtasks are also deleted
-        assertNull(taskManager.getSubtaskById(subtask1.getId()), "Subtask 1 should be deleted with the Epic.");
-        assertNull(taskManager.getSubtaskById(subtask2.getId()), "Subtask 2 should be deleted with the Epic.");
+        // Убедимся, что подзадачи также удалены.
+        assertNull(taskManager.getSubtaskById(subtask1.getId()), "Подзадача 1 должна быть удалена вместе с эпиком.");
+        assertNull(taskManager.getSubtaskById(subtask2.getId()), "Подзадача 2 должна быть удалена вместе с эпиком.");
     }
 
-    // Test changing subtask's epic association
+    // Тест изменения ассоциации подзадачи с эпиком.
     @Test
     public void testSubtaskEpicIdChangeThroughManager() {
         Epic epic1 = new Epic("Epic 1", "Epic Description 1");
@@ -152,14 +153,10 @@ public class InMemoryTaskManagerTest {
         Subtask subtask = new Subtask("Subtask", "Subtask Description", TaskStatus.NEW);
         taskManager.createSubtask(subtask, epic1);
 
-        // Change subtask's epic association
         boolean updated = ((InMemoryTaskManager) taskManager).updateSubtaskEpic(subtask, epic2);
-        assertTrue(updated, "Should successfully update subtask's epic association.");
+        assertTrue(updated, "Должно успешно обновиться ассоциация подзадачи с эпиком.");
 
-        // Ensure subtask is no longer in old epic
-        assertFalse(epic1.getSubtaskIds().contains(subtask.getId()), "Subtask should not be in the old Epic.");
-
-        // Ensure subtask is now in new epic
-        assertTrue(epic2.getSubtaskIds().contains(subtask.getId()), "Subtask should be in the new Epic.");
+        assertFalse(epic1.getSubtaskIds().contains(subtask.getId()), "Подзадача не должна быть в старом эпике.");
+        assertTrue(epic2.getSubtaskIds().contains(subtask.getId()), "Подзадача должна быть в новом эпике.");
     }
 }
