@@ -10,6 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryHistoryManagerTest {
+
     private HistoryManager historyManager;
 
     @BeforeEach
@@ -20,10 +21,10 @@ public class InMemoryHistoryManagerTest {
     // Проверка добавления задач в историю
     @Test
     public void testAddTasksToHistory() {
-        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
         task1.setId(1);
 
-        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "Описание 2", TaskStatus.NEW);
         task2.setId(2);
 
         historyManager.add(task1);
@@ -39,7 +40,7 @@ public class InMemoryHistoryManagerTest {
     // Проверка отсутствия дубликатов в истории
     @Test
     public void testNoDuplicatesInHistory() {
-        Task task = new Task("Task", "Description", TaskStatus.NEW);
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW);
         task.setId(1);
 
         historyManager.add(task);
@@ -50,13 +51,13 @@ public class InMemoryHistoryManagerTest {
         assertEquals(1, history.size(), "История не должна содержать дубликаты.");
     }
 
-    // Проверка удаления задач из истории
+    // Проверка удаления задачи из истории
     @Test
     public void testRemoveTaskFromHistory() {
-        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
         task1.setId(1);
 
-        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "Описание 2", TaskStatus.NEW);
         task2.setId(2);
 
         historyManager.add(task1);
@@ -67,19 +68,19 @@ public class InMemoryHistoryManagerTest {
         List<Task> history = historyManager.getHistory();
 
         assertEquals(1, history.size(), "История должна содержать 1 задачу после удаления.");
-        assertEquals(task2, history.getFirst(), "Оставшаяся задача должна быть task2.");
+        assertEquals(task2, history.get(0), "Оставшаяся задача должна быть task2.");
     }
 
     // Проверка порядка задач при повторном добавлении
     @Test
     public void testTaskOrderAfterReAdding() {
-        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
         task1.setId(1);
 
-        Task task2 = new Task("Task 2", "Description 2", TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "Описание 2", TaskStatus.NEW);
         task2.setId(2);
 
-        Task task3 = new Task("Task 3", "Description 3", TaskStatus.NEW);
+        Task task3 = new Task("Задача 3", "Описание 3", TaskStatus.NEW);
         task3.setId(3);
 
         historyManager.add(task1);

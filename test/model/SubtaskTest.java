@@ -13,17 +13,17 @@ public class SubtaskTest {
     public void testEqualSameId() {
         TaskManager taskManager = new InMemoryTaskManager();
 
-        // Создаём Epic
-        Epic epic = new Epic("Epic 1", "Description 1");
+        // Создаём эпик
+        Epic epic = new Epic("Эпик 1", "Описание 1");
         taskManager.createEpic(epic);
 
         // Создаём первую подзадачу
-        Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW);
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
         taskManager.createSubtask(subtask1, epic);
         int subtaskId = subtask1.getId();
 
         // Создаём вторую подзадачу и устанавливаем тот же ID
-        Subtask subtask2 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW);
+        Subtask subtask2 = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
         subtask2.setId(subtaskId);
 
         // Пытаемся добавить вторую подзадачу
@@ -42,15 +42,15 @@ public class SubtaskTest {
     public void testInequalDiffId() {
         TaskManager taskManager = new InMemoryTaskManager();
 
-        // Создаём Epic
-        Epic epic = new Epic("Epic 1", "Description 1");
+        // Создаём эпик
+        Epic epic = new Epic("Эпик 1", "Описание 1");
         taskManager.createEpic(epic);
 
         // Создаём две подзадачи
-        Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW);
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
         taskManager.createSubtask(subtask1, epic);
 
-        Subtask subtask2 = new Subtask("Subtask 2", "Description 2", TaskStatus.IN_PROGRESS);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание 2", TaskStatus.IN_PROGRESS);
         taskManager.createSubtask(subtask2, epic);
 
         assertNotEquals(subtask1.getId(), subtask2.getId(), "Подзадачи должны иметь разные ID.");
@@ -63,10 +63,10 @@ public class SubtaskTest {
         TaskManager taskManager = new InMemoryTaskManager();
 
         // Создаём подзадачу
-        Subtask subtask = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW);
+        Subtask subtask = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
 
         // Создаём эпик, но не добавляем его в менеджер (несуществующий эпик)
-        Epic nonexistentEpic = new Epic("Nonexistent Epic", "Description");
+        Epic nonexistentEpic = new Epic("Несуществующий эпик", "Описание");
 
         // Пытаемся добавить подзадачу с несуществующим эпиком
         boolean result = taskManager.createSubtask(subtask, nonexistentEpic);
