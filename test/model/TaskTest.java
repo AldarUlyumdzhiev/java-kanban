@@ -12,18 +12,18 @@ public class TaskTest {
     public void testEqualSameId() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
-        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
         taskManager.createTask(task1);
         int id = task1.getId();
 
-        Task task2 = new Task("Task 1", "Description 1", TaskStatus.NEW);
-        // Устанавливаем тот же ID для второго задания
+        Task task2 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
+        // Устанавливаем тот же ID для второй задачи
         task2.setId(id);
 
         // Пытаемся добавить вторую задачу
         boolean result = taskManager.createTask(task2);
 
-        // добавление не произойдет
+        // Добавление не должно произойти
         assertFalse(result, "Задача с существующим ID не должна быть добавлена.");
 
         // Проверяем, что в менеджере только первая задача
@@ -36,26 +36,26 @@ public class TaskTest {
     public void testInequalDiffId() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
-        Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
         taskManager.createTask(task1);
 
-        Task task2 = new Task("Task 1", "Description 1", TaskStatus.NEW);
+        Task task2 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
         taskManager.createTask(task2);
 
         assertNotEquals(task1.getId(), task2.getId(), "Задачи должны иметь разные ID.");
         assertNotEquals(task1, task2, "Задачи с разными ID не должны быть равны.");
     }
 
-    // Проверка работы сеттеров Task
+    // Проверка работы сеттеров класса Task
     @Test
     public void testSetters() {
-        Task task = new Task("Test Task", "Test Description", TaskStatus.NEW);
-        task.setName("Updated Task");
-        task.setDescription("Updated Description");
+        Task task = new Task("Тестовая задача", "Тестовое описание", TaskStatus.NEW);
+        task.setName("Обновлённая задача");
+        task.setDescription("Обновлённое описание");
         task.setStatus(TaskStatus.IN_PROGRESS);
 
-        assertEquals("Updated Task", task.getName());
-        assertEquals("Updated Description", task.getDescription());
+        assertEquals("Обновлённая задача", task.getName());
+        assertEquals("Обновлённое описание", task.getDescription());
         assertEquals(TaskStatus.IN_PROGRESS, task.getStatus());
     }
 }

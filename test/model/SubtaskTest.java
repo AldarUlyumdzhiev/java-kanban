@@ -1,6 +1,7 @@
 package model;
 
 import manager.InMemoryTaskManager;
+import manager.TaskManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,25 +11,25 @@ public class SubtaskTest {
     // Проверка равенства подзадач с одинаковыми ID и полями
     @Test
     public void testEqualSameId() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
 
-        // Создаем Epic
-        Epic epic = new Epic("Epic 1", "Description 1");
+        // Создаём эпик
+        Epic epic = new Epic("Эпик 1", "Описание 1");
         taskManager.createEpic(epic);
 
-        // Создаем первую подзадачу
-        Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic.getId());
-        taskManager.createSubtask(subtask1);
+        // Создаём первую подзадачу
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
+        taskManager.createSubtask(subtask1, epic);
         int subtaskId = subtask1.getId();
 
-        // Создаем вторую подзадачу с тем же ID
-        Subtask subtask2 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic.getId());
+        // Создаём вторую подзадачу и устанавливаем тот же ID
+        Subtask subtask2 = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
         subtask2.setId(subtaskId);
 
         // Пытаемся добавить вторую подзадачу
-        boolean result = taskManager.createSubtask(subtask2);
+        boolean result = taskManager.createSubtask(subtask2, epic);
 
-        // Ожидаем, что добавление не произойдет
+        // Ожидаем, что добавление не произойдёт, так как ID уже существует
         assertFalse(result, "Подзадача с существующим ID не должна быть добавлена.");
 
         // Проверяем, что в менеджере по-прежнему только первая подзадача
@@ -39,36 +40,39 @@ public class SubtaskTest {
     // Проверка неравенства подзадач с разными ID
     @Test
     public void testInequalDiffId() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
 
-        // Создаем Epic
-        Epic epic = new Epic("Epic 1", "Description 1");
+        // Создаём эпик
+        Epic epic = new Epic("Эпик 1", "Описание 1");
         taskManager.createEpic(epic);
 
-        // Создаем две подзадачи
-        Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic.getId());
-        taskManager.createSubtask(subtask1);
+        // Создаём две подзадачи
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
+        taskManager.createSubtask(subtask1, epic);
 
-        Subtask subtask2 = new Subtask("Subtask 2", "Description 2", TaskStatus.IN_PROGRESS, epic.getId());
-        taskManager.createSubtask(subtask2);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание 2", TaskStatus.IN_PROGRESS);
+        taskManager.createSubtask(subtask2, epic);
 
         assertNotEquals(subtask1.getId(), subtask2.getId(), "Подзадачи должны иметь разные ID.");
         assertNotEquals(subtask1, subtask2, "Подзадачи с разными ID не должны быть равны.");
     }
 
-    // Проверка, что Subtask не может быть своим собственным эпиком
+    // Проверка, что подзадача не может быть добавлена с несуществующим эпиком
     @Test
-    public void testSubtaskForNullEpic() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+    public void testSubtaskForNonexistentEpic() {
+        TaskManager taskManager = new InMemoryTaskManager();
 
-        // Пытаемся создать Subtask с несуществующим epicId
-        Subtask subtask = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, 999);
+        // Создаём подзадачу
+        Subtask subtask = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
 
-        // Пытаемся добавить подзадачу
-        boolean result = taskManager.createSubtask(subtask);
+        // Создаём эпик, но не добавляем его в менеджер (несуществующий эпик)
+        Epic nonexistentEpic = new Epic("Несуществующий эпик", "Описание");
 
-        // Ожидаем, что добавление не произойдет
-        assertFalse(result, "Подзадача с несуществующим epicId не должна быть добавлена.");
+        // Пытаемся добавить подзадачу с несуществующим эпиком
+        boolean result = taskManager.createSubtask(subtask, nonexistentEpic);
+
+        // Ожидаем, что добавление не произойдёт
+        assertFalse(result, "Подзадача с несуществующим эпиком не должна быть добавлена.");
 
         // Проверяем, что подзадача не добавлена в менеджер
         assertNull(taskManager.getSubtaskById(subtask.getId()), "Подзадача не должна существовать в менеджере.");
