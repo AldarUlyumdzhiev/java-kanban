@@ -188,7 +188,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         for (Task task : history) {
             sb.append(task.getId()).append(",");
         }
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             sb.deleteCharAt(sb.length() - 1); // Удаляем последнюю запятую
         }
         return sb.toString();
