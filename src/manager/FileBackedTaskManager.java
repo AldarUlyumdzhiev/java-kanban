@@ -124,7 +124,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             // Читаем задачи до пустой строки
             while (lineIndex < lines.size() && !lines.get(lineIndex ).isEmpty()) {
-                Task task = fromString(lines.get(lineIndex ));
+                Task task = fromString(lines.get(lineIndex));
                 if (task != null) {
                     int id = task.getId();
                     if (id > maxId) {
