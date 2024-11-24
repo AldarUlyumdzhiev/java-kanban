@@ -123,7 +123,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             int lineIndex  = 1; // Пропускаем заголовок
 
             // Читаем задачи до пустой строки
-            while (lineIndex  < lines.size() && !lines.get(lineIndex ).isEmpty()) {
+            while (lineIndex < lines.size() && !lines.get(lineIndex ).isEmpty()) {
                 Task task = fromString(lines.get(lineIndex ));
                 if (task != null) {
                     int id = task.getId();
