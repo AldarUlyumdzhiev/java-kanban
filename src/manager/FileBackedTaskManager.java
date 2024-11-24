@@ -58,18 +58,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // Метод для преобразования задачи в строку CSV
     private String taskToString(Task task) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(task.getId()).append(",");
-        sb.append(getType(task)).append(",");
-        sb.append(task.getName()).append(",");
-        sb.append(task.getStatus()).append(",");
-        sb.append(task.getDescription()).append(",");
+        StringBuilder taskStringBuilder = new StringBuilder();
+        taskStringBuilder.append(task.getId()).append(",");
+        taskStringBuilder.append(getType(task)).append(",");
+        taskStringBuilder.append(task.getName()).append(",");
+        taskStringBuilder.append(task.getStatus()).append(",");
+        taskStringBuilder.append(task.getDescription()).append(",");
 
         if (task instanceof Subtask) {
-            sb.append(((Subtask) task).getEpicId());
+            taskStringBuilder.append(((Subtask) task).getEpicId());
         }
 
-        return sb.toString();
+        return taskStringBuilder.toString();
     }
 
     // Метод для определения типа задачи
@@ -120,11 +120,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             List<String> lines = Files.readAllLines(file.toPath());
 
             int maxId = 0;
-            int i = 1; // Пропускаем заголовок
+            int lineIndex  = 1; // Пропускаем заголовок
 
             // Читаем задачи до пустой строки
-            while (i < lines.size() && !lines.get(i).isEmpty()) {
-                Task task = fromString(lines.get(i));
+            while (lineIndex  < lines.size() && !lines.get(lineIndex ).isEmpty()) {
+                Task task = fromString(lines.get(lineIndex ));
                 if (task != null) {
                     int id = task.getId();
                     if (id > maxId) {
@@ -138,7 +138,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         manager.tasks.put(id, task);
                     }
                 }
-                i++;
+                lineIndex++;
             }
 
             // Обновляем счетчик ID
@@ -153,11 +153,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
 
             // Пропускаем пустую строку
-            i++;
+            lineIndex++;
 
             // Читаем и восстанавливаем историю
-            if (i < lines.size()) {
-                String historyLine = lines.get(i);
+            if (lineIndex < lines.size()) {
+                String historyLine = lines.get(lineIndex);
                 List<Integer> historyIds = historyFromString(historyLine);
                 for (Integer id : historyIds) {
                     if (manager.tasks.containsKey(id)) {
@@ -184,14 +184,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     // Метод для преобразования истории в строку CSV
     private static String historyToString(HistoryManager manager) {
         List<Task> history = manager.getHistory();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder historyStringBuilder = new StringBuilder();
         for (Task task : history) {
-            sb.append(task.getId()).append(",");
+            historyStringBuilder.append(task.getId()).append(",");
         }
-        if (!sb.isEmpty()) {
-            sb.deleteCharAt(sb.length() - 1); // Удаляем последнюю запятую
+        if (!historyStringBuilder.isEmpty()) {
+            historyStringBuilder.deleteCharAt(historyStringBuilder.length() - 1); // Удаляем последнюю запятую
         }
-        return sb.toString();
+        return historyStringBuilder.toString();
     }
 
     // Метод для восстановления истории из строки CSV
