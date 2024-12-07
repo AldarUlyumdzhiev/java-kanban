@@ -2,6 +2,8 @@ package model;
 
 import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.Test;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,5 +59,24 @@ public class TaskTest {
         assertEquals("Обновлённая задача", task.getName());
         assertEquals("Обновлённое описание", task.getDescription());
         assertEquals(TaskStatus.IN_PROGRESS, task.getStatus());
+    }
+
+    // Проверка отсутствия пересечения задач
+    @Test
+    public void testTaskNoOverlap() {
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+
+        Task task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
+        task1.setStartTime(LocalDateTime.of(2023, 12, 1, 10, 0));
+        task1.setDuration(Duration.ofMinutes(60));
+        taskManager.createTask(task1);
+
+        Task task2 = new Task("Задача 2", "Описание 2", TaskStatus.NEW);
+        task2.setStartTime(LocalDateTime.of(2023, 12, 1, 11, 0));
+        task2.setDuration(Duration.ofMinutes(60));
+        taskManager.createTask(task2);
+
+        assertEquals(task1, taskManager.getTaskById(task1.getId()), "Первая задача должна быть сохранена.");
+        assertEquals(task2, taskManager.getTaskById(task2.getId()), "Вторая задача должна быть сохранена.");
     }
 }
