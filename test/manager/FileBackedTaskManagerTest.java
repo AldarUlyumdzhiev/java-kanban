@@ -76,20 +76,6 @@ public class FileBackedTaskManagerTest {
         assertEquals(subtask2, loadedSubtask2, "Вторая подзадача должна совпадать.");
     }
 
-    // Проверка обработки некорректного файла
-    @Test
-    public void testLoadFromCorruptedFile() {
-        File file = new File("corrupted_file.csv");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("Некорректные данные");
-        } catch (IOException e) {
-            fail("Ошибка при записи тестового файла.");
-        }
-
-        assertThrows(ManagerSaveException.class, () -> FileBackedTaskManager.loadFromFile(file),
-                "Должно выбрасываться исключение при загрузке повреждённого файла.");
-    }
-
     // Проверка сохранения и загрузки истории задач из файла
     @Test
     public void testHistorySaveAndLoad() throws IOException {

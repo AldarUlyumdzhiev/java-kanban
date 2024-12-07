@@ -278,7 +278,7 @@ public class InMemoryTaskManager implements TaskManager {
                 .toList();
     }
 
-    // Метод для обновления статуса эпика
+    // Метод для обновления статуса и времени эпика
     protected void updateEpicStatus(Epic epic) {
         List<Integer> subtaskIds = epic.getSubtaskIds();
         if (subtaskIds.isEmpty()) {
@@ -325,7 +325,9 @@ public class InMemoryTaskManager implements TaskManager {
 
         epic.setStartTime(earliestStart);
         epic.setDuration(totalDuration);
+        epic.setEndTime(latestEnd);
     }
+
 
     // Метод для получения истории просмотров
     @Override
