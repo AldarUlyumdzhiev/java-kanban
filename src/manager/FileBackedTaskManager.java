@@ -8,12 +8,14 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private final File file;
 
-    // Конструктор, принимающий файл для автосохранения
+    // Конструктор, принимающий файл для авто сохранения
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
@@ -64,6 +66,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         taskStringBuilder.append(task.getName()).append(",");
         taskStringBuilder.append(task.getStatus()).append(",");
         taskStringBuilder.append(task.getDescription()).append(",");
+        taskStringBuilder.append(task.getDuration().toMinutes()).append(",");
+        taskStringBuilder.append(task.getStartTime() != null ? task.getStartTime() : "null");
 
         if (task instanceof Subtask) {
             taskStringBuilder.append(((Subtask) task).getEpicId());
@@ -91,11 +95,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
+        Duration duration = Duration.ofMinutes(Long.parseLong(fields[5]));
+        LocalDateTime startTime = !fields[6].equals("null") ? LocalDateTime.parse(fields[6]) : null;
 
         switch (type) {
             case "TASK":
                 Task task = new Task(name, description, status);
                 task.setId(id);
+                task.setDuration(duration);
+                task.setStartTime(startTime);
                 return task;
             case "EPIC":
                 Epic epic = new Epic(name, description);
@@ -106,6 +114,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 int epicId = Integer.parseInt(fields[5]);
                 Subtask subtask = new Subtask(name, description, status);
                 subtask.setId(id);
+                subtask.setDuration(duration);
+                subtask.setStartTime(startTime);
                 subtask.setEpicId(epicId);
                 return subtask;
             default:
@@ -141,6 +151,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 lineIndex++;
             }
 
+            // Добавляем все задачи в TreeSet для отсортированного хранения
+            manager.prioritizedTasks.addAll(manager.tasks.values());
+            manager.prioritizedTasks.addAll(manager.subtasks.values());
+
             // Обновляем счетчик ID
             manager.idCounter = maxId;
 
@@ -152,6 +166,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
             }
 
+            // Пересчитываем поля времени эпиков
+            for (Epic epic : manager.epics.values()) {
+                List<Subtask> epicSubtasks = new ArrayList<>();
+                for (int subtaskId : epic.getSubtaskIds()) {
+                    if (manager.subtasks.containsKey(subtaskId)) {
+                        epicSubtasks.add(manager.subtasks.get(subtaskId));
+                    }
+                }
+                epic.updateTimes(epicSubtasks); // Пересчёт времени эпика
+            }
+
+            // Обновляем статусы эпиков
+            for (Epic epic : manager.epics.values()) {
+                manager.updateEpicStatus(epic);
+            }
             // Пропускаем пустую строку
             lineIndex++;
 
@@ -169,12 +198,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     }
                 }
             }
-
-            // Обновляем статусы эпиков
-            for (Epic epic : manager.epics.values()) {
-                manager.updateEpicStatus(epic);
-            }
-
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при загрузке из файла: " + e.getMessage());
         }
@@ -207,8 +230,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     // Переопределяем методы, изменяющие состояние, чтобы добавить вызов save()
     @Override
     public boolean createTask(Task task) {
+        // Проверяем, пересекается ли задача с уже существующей
+        if (isOverlappingWithExistingTasks(task)) {
+            throw new IllegalArgumentException("Task overlaps with an existing task.");
+        }
+
         boolean result = super.createTask(task);
-        save();
+
+        if (result) {
+            save();
+        }
+
         return result;
     }
 
