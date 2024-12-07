@@ -338,7 +338,10 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод для получения списка задач по приоритету
     @Override
     public List<Task> getPrioritizedTasks() {
-        return new ArrayList<>(prioritizedTasks);
+        // Фильтруем задачи с startTime == null
+        return prioritizedTasks.stream()
+                .filter(task -> task.getStartTime() != null)
+                .toList();
     }
 
     // Метод для проверки пересечения двух задач по времени
