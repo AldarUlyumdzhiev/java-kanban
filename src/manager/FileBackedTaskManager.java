@@ -120,7 +120,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 subtask.setEpicId(epicId);
                 return subtask;
             default:
-                return null;
+                throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
         }
     }
 
@@ -136,18 +136,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             // Читаем задачи до пустой строки
             while (lineIndex < lines.size() && !lines.get(lineIndex).isEmpty()) {
                 Task task = fromString(lines.get(lineIndex));
-                if (task != null) {
-                    int id = task.getId();
-                    if (id > maxId) {
-                        maxId = id;
-                    }
-                    if (task instanceof Epic) {
-                        manager.epics.put(id, (Epic) task);
-                    } else if (task instanceof Subtask) {
-                        manager.subtasks.put(id, (Subtask) task);
-                    } else {
-                        manager.tasks.put(id, task);
-                    }
+                int id = task.getId();
+                if (id > maxId) {
+                    maxId = id;
+                }
+                if (task instanceof Epic) {
+                    manager.epics.put(id, (Epic) task);
+                } else if (task instanceof Subtask) {
+                    manager.subtasks.put(id, (Subtask) task);
+                } else {
+                    manager.tasks.put(id, task);
                 }
                 lineIndex++;
             }

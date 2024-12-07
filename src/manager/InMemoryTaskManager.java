@@ -61,15 +61,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean createTask(Task task) {
+        if (tasks.containsKey(task.getId())) {
+            return false; // ID уже существует
+        }
         if (isOverlappingWithExistingTasks(task)) {
             throw new IllegalArgumentException("Задача пересекается с уже существующей.");
         }
-
         int id = generateId();
         task.setId(id);
         tasks.put(id, task);
         prioritizedTasks.add(task);
-
         return true;
     }
 
@@ -162,14 +163,15 @@ public class InMemoryTaskManager implements TaskManager {
     // Методы для подзадач (Subtask)
     @Override
     public boolean createSubtask(Subtask subtask, Epic epic) {
+        if (subtasks.containsKey(subtask.getId())) {
+            return false;
+        }
         if (!epics.containsKey(epic.getId())) {
             return false;
         }
-
         if (isOverlappingWithExistingTasks(subtask)) {
             throw new IllegalArgumentException("Подзадача пересекается с другой задачей.");
         }
-
         int id = generateId();
         subtask.setId(id);
         subtask.setEpicId(epic.getId());
@@ -179,6 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epic);
         return true;
     }
+
 
     @Override
     public List<Subtask> getAllSubtasks() {
@@ -348,9 +351,8 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод для проверки пересечения с уже существующими задачами в prioritizedTasks
     protected boolean isOverlappingWithExistingTasks(Task newTask) {
         if (newTask.getStartTime() == null || newTask.getDuration() == null) {
-            return false; // Задачи без времени старта не считаются перекрывающимися
+            return false;
         }
-
         for (Task existingTask : prioritizedTasks) {
             if (existingTask.getStartTime() != null &&
                     isOverlapping(newTask, existingTask)) {
