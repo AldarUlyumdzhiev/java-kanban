@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Comparator;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class InMemoryTaskManager implements TaskManager {
 
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -277,19 +280,35 @@ public class InMemoryTaskManager implements TaskManager {
         List<Integer> subtaskIds = epic.getSubtaskIds();
         if (subtaskIds.isEmpty()) {
             epic.setStatus(TaskStatus.NEW);
+            epic.setStartTime(null);
+            epic.setDuration(Duration.ZERO);
             return;
         }
 
         boolean areAllSubtasksNew = true;
         boolean areAllSubtasksDone = true;
 
+        LocalDateTime earliestStart = null;
+        LocalDateTime latestEnd = null;
+        Duration totalDuration = Duration.ZERO;
+
         for (int id : subtaskIds) {
-            TaskStatus status = subtasks.get(id).getStatus();
-            if (status != TaskStatus.NEW) {
-                areAllSubtasksNew = false;
-            }
-            if (status != TaskStatus.DONE) {
-                areAllSubtasksDone = false;
+            Subtask subtask = subtasks.get(id);
+            if (subtask == null) continue;
+
+            TaskStatus status = subtask.getStatus();
+            if (status != TaskStatus.NEW) areAllSubtasksNew = false;
+            if (status != TaskStatus.DONE) areAllSubtasksDone = false;
+
+            if (subtask.getStartTime() != null) {
+                if (earliestStart == null || subtask.getStartTime().isBefore(earliestStart)) {
+                    earliestStart = subtask.getStartTime();
+                }
+                LocalDateTime subtaskEnd = subtask.getEndTime();
+                if (latestEnd == null || subtaskEnd.isAfter(latestEnd)) {
+                    latestEnd = subtaskEnd;
+                }
+                totalDuration = totalDuration.plus(subtask.getDuration());
             }
         }
 
@@ -300,6 +319,9 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             epic.setStatus(TaskStatus.IN_PROGRESS);
         }
+
+        epic.setStartTime(earliestStart);
+        epic.setDuration(totalDuration);
     }
 
     // Метод для получения истории просмотров
@@ -325,12 +347,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Метод для проверки пересечения с уже существующими задачами в prioritizedTasks
     protected boolean isOverlappingWithExistingTasks(Task newTask) {
+        if (newTask.getStartTime() == null || newTask.getDuration() == null) {
+            return false; // Задачи без времени старта не считаются перекрывающимися
+        }
+
         for (Task existingTask : prioritizedTasks) {
-            if (isOverlapping(newTask, existingTask)) {
+            if (existingTask.getStartTime() != null &&
+                    isOverlapping(newTask, existingTask)) {
                 return true;
             }
         }
         return false;
     }
-
 }

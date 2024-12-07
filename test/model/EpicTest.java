@@ -3,9 +3,10 @@ package model;
 import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.time.LocalDateTime;
 import java.time.Duration;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EpicTest {
 
