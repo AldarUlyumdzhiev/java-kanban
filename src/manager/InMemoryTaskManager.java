@@ -342,24 +342,28 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод для проверки пересечения двух задач по времени
     protected boolean isOverlapping(Task task1, Task task2) {
         if (task1.getStartTime() == null || task2.getStartTime() == null) {
-            return false;
+            return false; // Если одна из задач не имеет времени старта, они не пересекаются
         }
-        return !(task1.getEndTime().isBefore(task2.getStartTime()) ||
-                task2.getEndTime().isBefore(task1.getStartTime()));
+
+        // Проверяем, пересекаются ли задачи
+        return !(task1.getEndTime().isBefore(task2.getStartTime()) || // task1 полностью до task2
+                task1.getEndTime().equals(task2.getStartTime()) ||  // task1 заканчивается ровно, когда начинается task2
+                task2.getEndTime().isBefore(task1.getStartTime()) || // task2 полностью до task1
+                task2.getEndTime().equals(task1.getStartTime()));   // task2 заканчивается ровно, когда начинается task1
     }
+
 
     // Метод для проверки пересечения с уже существующими задачами в prioritizedTasks
     protected boolean isOverlappingWithExistingTasks(Task newTask) {
         if (newTask.getStartTime() == null || newTask.getDuration() == null) {
             return false;
         }
+
         for (Task existingTask : prioritizedTasks) {
-            if (existingTask.getStartTime() != null &&
-                    isOverlapping(newTask, existingTask)) {
-                return true;
+            if (existingTask.getStartTime() != null && isOverlapping(newTask, existingTask)) {
+                return true; // Если хотя бы одна задача пересекается, возвращаем true
             }
         }
         return false;
     }
-
 }
