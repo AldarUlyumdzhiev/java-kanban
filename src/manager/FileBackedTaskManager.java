@@ -130,22 +130,30 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try {
             List<String> lines = Files.readAllLines(file.toPath());
 
+            if (lines.isEmpty()) {
+                throw new ManagerSaveException("Файл пустой.");
+            }
+
             int maxId = 0;
-            int lineIndex  = 1; // Пропускаем заголовок
+            int lineIndex = 1; // Пропускаем заголовок
 
             // Читаем задачи до пустой строки
             while (lineIndex < lines.size() && !lines.get(lineIndex).isEmpty()) {
-                Task task = fromString(lines.get(lineIndex));
-                int id = task.getId();
-                if (id > maxId) {
-                    maxId = id;
-                }
-                if (task instanceof Epic) {
-                    manager.epics.put(id, (Epic) task);
-                } else if (task instanceof Subtask) {
-                    manager.subtasks.put(id, (Subtask) task);
-                } else {
-                    manager.tasks.put(id, task);
+                try {
+                    Task task = fromString(lines.get(lineIndex));
+                    int id = task.getId();
+                    if (id > maxId) {
+                        maxId = id;
+                    }
+                    if (task instanceof Epic) {
+                        manager.epics.put(id, (Epic) task);
+                    } else if (task instanceof Subtask) {
+                        manager.subtasks.put(id, (Subtask) task);
+                    } else {
+                        manager.tasks.put(id, task);
+                    }
+                } catch (Exception e) {
+                    throw new ManagerSaveException("Ошибка при обработке строки: " + lines.get(lineIndex));
                 }
                 lineIndex++;
             }
@@ -180,8 +188,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             for (Epic epic : manager.epics.values()) {
                 manager.updateEpicStatus(epic);
             }
-            // Пропускаем пустую строку
-            lineIndex++;
+
+            // Пропускаем пустую строку, если она существует
+            do {
+                lineIndex++;
+            } while (lineIndex < lines.size() && lines.get(lineIndex).isEmpty());
 
             // Читаем и восстанавливаем историю
             if (lineIndex < lines.size()) {
@@ -202,6 +213,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         return manager;
     }
+
 
     // Метод для преобразования истории в строку CSV
     private static String historyToString(HistoryManager manager) {
