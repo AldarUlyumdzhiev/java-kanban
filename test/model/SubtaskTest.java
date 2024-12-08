@@ -4,6 +4,9 @@ import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SubtaskTest {
@@ -76,5 +79,27 @@ public class SubtaskTest {
 
         // Проверяем, что подзадача не добавлена в менеджер
         assertNull(taskManager.getSubtaskById(subtask.getId()), "Подзадача не должна существовать в менеджере.");
+    }
+
+    // Проверка установки времени начала и продолжительности подзадачи
+    @Test
+    public void testSubtaskTimeProperties() {
+        TaskManager taskManager = new InMemoryTaskManager();
+
+        Epic epic = new Epic("Эпик 1", "Описание 1");
+        taskManager.createEpic(epic);
+
+        Subtask subtask = new Subtask("Подзадача 1", "Описание 1", TaskStatus.NEW);
+        subtask.setStartTime(LocalDateTime.of(2023, 12, 1, 10, 0));
+        subtask.setDuration(Duration.ofMinutes(90));
+        taskManager.createSubtask(subtask, epic);
+
+        Subtask retrievedSubtask = taskManager.getSubtaskById(subtask.getId());
+        assertEquals(LocalDateTime.of(2023, 12, 1, 10, 0), retrievedSubtask.getStartTime(),
+                "Время начала подзадачи должно совпадать.");
+        assertEquals(Duration.ofMinutes(90), retrievedSubtask.getDuration(),
+                "Продолжительность подзадачи должна совпадать.");
+        assertEquals(LocalDateTime.of(2023, 12, 1, 11, 30), retrievedSubtask.getEndTime(),
+                "Время завершения подзадачи должно совпадать.");
     }
 }
