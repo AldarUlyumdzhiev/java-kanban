@@ -64,8 +64,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(task.getId())) {
             return false; // ID уже существует
         }
-        if (isOverlappingWithExistingTasks(task)) {
-            throw new IllegalArgumentException("Задача пересекается с уже существующей.");
+        Task conflictingTask = findConflictingTask(task);
+        if (conflictingTask != null) {
+            throw new IllegalArgumentException("Задача пересекается с уже существующей. ID пересекающейся задачи: " + conflictingTask.getId());
         }
         int id = generateId();
         task.setId(id);
@@ -81,8 +82,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         prioritizedTasks.remove(tasks.get(task.getId())); // Удаляем старую версию
-        if (isOverlappingWithExistingTasks(task)) {
-            throw new IllegalArgumentException("Задача пересекается с другой задачей.");
+        Task conflictingTask = findConflictingTask(task);
+        if (conflictingTask != null) {
+            throw new IllegalArgumentException("Задача пересекается с другой задачей. ID пересекающейся задачи: " + conflictingTask.getId());
         }
 
         tasks.put(task.getId(), task);
@@ -166,12 +168,16 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(subtask.getId())) {
             return false;
         }
+
         if (!epics.containsKey(epic.getId())) {
             return false;
         }
-        if (isOverlappingWithExistingTasks(subtask)) {
-            throw new IllegalArgumentException("Подзадача пересекается с другой задачей.");
+
+        Task conflictingTask = findConflictingTask(subtask);
+        if (conflictingTask != null) {
+            throw new IllegalArgumentException("Подзадача пересекается с другой задачей. ID пересекающейся задачи: " + conflictingTask.getId());
         }
+
         int id = generateId();
         subtask.setId(id);
         subtask.setEpicId(epic.getId());
@@ -204,9 +210,11 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         prioritizedTasks.remove(subtasks.get(subtask.getId())); // Удаляем старую версию
-        if (isOverlappingWithExistingTasks(subtask)) {
-            throw new IllegalArgumentException("Подзадача пересекается с другой задачей.");
+        Task conflictingTask = findConflictingTask(subtask);
+        if (conflictingTask != null) {
+            throw new IllegalArgumentException("Подзадача пересекается с другой задачей. ID пересекающейся задачи: " + conflictingTask.getId());
         }
+
 
         subtasks.put(subtask.getId(), subtask);
         prioritizedTasks.add(subtask);
@@ -357,6 +365,14 @@ public class InMemoryTaskManager implements TaskManager {
                 task2.getEndTime().equals(task1.getStartTime()));   // task2 заканчивается ровно, когда начинается task1
     }
 
+    private Task findConflictingTask(Task newTask) {
+        for (Task existingTask : prioritizedTasks) {
+            if (existingTask.getStartTime() != null && isOverlapping(newTask, existingTask)) {
+                return existingTask; // Возвращаем пересекающуюся задачу
+            }
+        }
+        return null; // null если нет пересечений
+    }
 
     // Метод для проверки пересечения с уже существующими задачами в prioritizedTasks
     protected boolean isOverlappingWithExistingTasks(Task newTask) {
