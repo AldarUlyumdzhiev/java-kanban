@@ -25,7 +25,7 @@ public class EpicHandlerTest {
 
     TaskManager manager = new InMemoryTaskManager();
     HttpTaskServer taskServer;
-    private static final Gson gson = new GsonBuilder()
+    Gson gson = new GsonBuilder()
             .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
             .create();

@@ -1,6 +1,7 @@
 package http;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import model.Task;
@@ -24,7 +25,10 @@ public class TaskHandlerTest {
 
     TaskManager manager = new InMemoryTaskManager();
     HttpTaskServer taskServer;
-    Gson gson = new Gson();
+    Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+            .create();
 
     public TaskHandlerTest() throws IOException {
         taskServer = new HttpTaskServer(manager);
