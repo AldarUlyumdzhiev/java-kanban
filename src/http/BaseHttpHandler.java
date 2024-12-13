@@ -9,7 +9,8 @@ import java.nio.charset.StandardCharsets;
 public class BaseHttpHandler implements HttpHandler {
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {}
+    public void handle(HttpExchange exchange) throws IOException {
+    }
 
     protected void sendText(HttpExchange exchange, String text, int statusCode) throws IOException {
         byte[] response = text.getBytes(StandardCharsets.UTF_8);
