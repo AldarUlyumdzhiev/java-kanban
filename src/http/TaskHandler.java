@@ -63,7 +63,7 @@ public class TaskHandler extends BaseHttpHandler {
             // Берем id из URI
             Integer taskId = parseIdFromQuery(query);
             if (taskId == null) {
-                sendNotFound(exchange, "Вы указали неправильный id");
+                sendNotFound(exchange, "Некорректный ID задачи: " + query);
                 return;
             }
             Task task = manager.getTaskById(taskId);
@@ -107,7 +107,7 @@ public class TaskHandler extends BaseHttpHandler {
         } else {
             Integer taskId = parseIdFromQuery(query);
             if (taskId == null) {
-                sendNotFound(exchange, "Вы ввели неправильный id задачи.");
+                sendNotFound(exchange, "Вы ввели неправильный id задачи: " + query);
                 return;
             }
             manager.deleteTaskById(taskId);

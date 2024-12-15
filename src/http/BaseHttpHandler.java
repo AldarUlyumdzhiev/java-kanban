@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 
 public class BaseHttpHandler implements HttpHandler {
 
+    private static final String ERROR_TEMPLATE = "Детали ошибки: %s";
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
     }
@@ -25,14 +27,14 @@ public class BaseHttpHandler implements HttpHandler {
     }
 
     protected void sendNotFound(HttpExchange exchange, String message) throws IOException {
-        sendText(exchange, "Детали ошибки: %s".formatted(message), 404);
+        sendText(exchange, String.format(ERROR_TEMPLATE, message), 404);
     }
 
     protected void sendHasInteractions(HttpExchange exchange, String message) throws IOException {
-        sendText(exchange, "Детали ошибки: %s".formatted(message), 406);
+        sendText(exchange, String.format(ERROR_TEMPLATE, message), 406);
     }
 
     protected void sendError(HttpExchange exchange, String message) throws IOException {
-        sendText(exchange, "Детали ошибки: %s".formatted(message), 500);
+        sendText(exchange, String.format(ERROR_TEMPLATE, message), 500);
     }
 }
